@@ -27,9 +27,10 @@ positive rate (\code{fp}) at that cut point, and the number of observations.
 \description{
 Estimates Kaplan-Meier survival above and below each candidate cut point
 of a marker at \code{predict_time} and returns the cut point that maximises the
-Youden index (sensitivity + specificity - 1), the criterion used by the
-now-archived \code{survivalROC} package. Candidates are drawn from a quantile
-grid to keep the computation bounded.
+Youden index (sensitivity + specificity - 1), the same criterion that the
+long-unmaintained \code{survivalROC} package uses, computed here directly from
+\code{\link[survival:survfit]{survival::survfit()}}. Candidates are drawn from a quantile grid to keep
+the computation bounded.
 }
 \examples{
 set.seed(1)
