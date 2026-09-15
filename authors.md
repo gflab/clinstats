@@ -11,7 +11,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/gflab/clinstats/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/gflab/clinstats/blob/v0.1.0/inst/CITATION)
 
 Gao F (2026). *clinstats: Clinical Research Statistics Toolkit*. R
 package version 0.1.0, <https://github.com/gflab/clinstats>.
