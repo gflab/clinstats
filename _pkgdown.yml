@@ -1,0 +1,35 @@
+url: https://gflab.github.io/clinstats/
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: Discrimination and odds ratios
+    contents:
+      - roc_summary
+      - odds_ratio
+  - title: Regression tables
+    contents:
+      - cox_table
+      - logistic_table
+      - evaluate_model
+  - title: Survival analysis
+    contents:
+      - survival_cutoff
+      - survival_response
+      - resample_cox
+  - title: Expression data
+    contents:
+      - clean_expression
+      - oncotype_crc
+  - title: TCGA clinical data
+    contents:
+      - tcga_clinical
+  - title: Datasets
+    contents:
+      - clin_crc
+      - clin_crc_gf
+      - clin_crc_cell
+  - title: Reporting
+    contents:
+      - copy_report_template

@@ -1,0 +1,116 @@
+---
+title: "Getting started with clinstats"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with clinstats}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(clinstats)
+```
+
+`clinstats` collects the statistical routines that recur in clinical research
+workflows: discrimination summaries, odds ratios, regression tables, survival
+cut points, and expression-matrix preparation. Every function returns a
+tibble, so results can be printed for a report or filtered, joined, and
+exported programmatically.
+
+## Bundled data
+
+The package ships a curated colorectal cancer clinical dataset assembled from
+public GEO series and TCGA exports.
+
+```{r}
+dim(clin_crc)
+table(clin_crc$dataset)
+```
+
+The three stored versions (`clin_crc`, `clin_crc_gf`, `clin_crc_cell`)
+correspond to the 2018 and 2019 harmonisations of the original repository.
+See the dataset help page for the column layout.
+
+## Regression tables
+
+`logistic_table()` and `cox_table()` fit every variable on its own, fit one
+multivariable model, and return a single table with both sets of estimates.
+
+```{r}
+logistic_table(
+  clin_crc,
+  outcome = "rfs.event",
+  factors = c("sex", "age", "tnm.stage", "cms")
+)
+```
+
+```{r}
+cox_table(
+  clin_crc,
+  time = "rfs.delay",
+  event = "rfs.event",
+  factors = c("sex", "age", "tnm.stage", "cms")
+)
+```
+
+The multivariable model includes all requested variables by default. Pass
+`multivariable = "significant"` to keep the historical screening rule in
+which only variables with a univariable likelihood-ratio p-value below 0.05
+enter the model.
+
+## Marker evaluation
+
+`roc_summary()` reports the area under the curve together with the optimal
+operating point, and `odds_ratio()` reports the odds ratio for the high group
+at the Youden-optimal threshold.
+
+```{r}
+marker <- scale(clin_crc$age)
+roc_summary(marker, clin_crc$rfs.event)
+odds_ratio(marker, clin_crc$rfs.event)
+```
+
+For a survival endpoint, `survival_cutoff()` estimates the Kaplan-Meier
+Youden index over a grid of candidate cut points and returns the best one.
+
+```{r}
+survival_cutoff(
+  time = clin_crc$rfs.delay,
+  event = clin_crc$rfs.event,
+  marker = marker,
+  predict_time = 3
+)
+```
+
+## Expression data
+
+`clean_expression()` prepares an expression matrix: it drops unusable
+columns, expands `" /// "` multi-mappings, optionally maps identifiers with
+`org.Hs.eg.db`, and collapses duplicated gene columns to the probe with the
+largest median absolute deviation.
+
+```{r}
+expr <- matrix(
+  rnorm(6 * 4),
+  nrow = 6,
+  dimnames = list(NULL, c("A", "A", "B", "C /// D"))
+)
+clean_expression(expr)
+```
+
+`oncotype_crc()` computes the Oncotype DX colon cancer recurrence score from
+the published panel; genes are expected in rows.
+
+## Reproducibility
+
+The bundled datasets are byte-identical to the archived
+`curatedClinicalData` objects, with provenance and checksums recorded in
+`data-raw/README.md`. Statistical conclusions drawn from them remain the
+responsibility of the analyst.

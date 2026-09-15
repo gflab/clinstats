@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software in published work, please cite it as below."
+authors:
+  - family-names: Gao
+    given-names: Feng
+title: "clinstats: Clinical Research Statistics Toolkit"
+version: 0.1.0
+date-released: "2026-09-16"
+license: Apache-2.0
+repository-code: "https://github.com/gflab/clinstats"
+abstract: >-
+  Statistical utilities for clinical and translational research, including
+  ROC summaries, odds ratios, Cox and logistic regression tables, survival
+  cut points, resampling-based Cox screening, TCGA clinical extraction,
+  expression-matrix cleaning, and curated public colorectal cancer clinical
+  datasets.

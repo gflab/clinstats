@@ -1,0 +1,40 @@
+Package: clinstats
+Title: Clinical Research Statistics Toolkit
+Version: 0.1.0
+Authors@R: c(
+    person("Feng", "Gao", email = "gaofeng21cn@gmail.com", role = c("aut", "cre")),
+    person("Lina", "Zhu", role = "ctb"),
+    person("Wei", "Wang", role = "ctb")
+  )
+Description: Statistical utilities that recur in clinical and translational
+    research workflows: receiver operating characteristic (ROC) summaries,
+    odds ratios, univariable and multivariable Cox and logistic regression
+    tables, time-dependent survival cut points, resampling-based Cox
+    screening, TCGA clinical extraction, and expression-matrix cleaning.
+    Includes curated colorectal cancer clinical datasets assembled from
+    public repositories, a Quarto report template, and tidy data-frame
+    output that is convenient for both interactive and programmatic use.
+License: Apache License (>= 2)
+URL: https://github.com/gflab/clinstats
+BugReports: https://github.com/gflab/clinstats/issues
+Depends:
+    R (>= 4.1)
+Imports:
+    cli,
+    future.apply,
+    pROC,
+    survival,
+    tibble,
+    withr
+Suggests:
+    AnnotationDbi,
+    knitr,
+    org.Hs.eg.db,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0

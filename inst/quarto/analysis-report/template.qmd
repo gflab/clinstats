@@ -1,0 +1,81 @@
+---
+title: "Analysis report"
+subtitle: ""
+author: ""
+date: today
+date-format: "YYYY-MM-DD"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    embed-resources: true
+    theme: [cosmo, styles.css]
+  pdf:
+    documentclass: article
+    number-sections: true
+    geometry: margin=2.5cm
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## Information
+
+- Aim:
+- Data:
+- Analysis:
+
+## Setup
+
+```{r setup}
+library(clinstats)
+library(survival)
+```
+
+## Example: clinical characteristics
+
+```{r characteristics}
+logistic_table(
+  clin_crc,
+  outcome = "rfs.event",
+  factors = c("sex", "age", "tnm.stage", "cms")
+)
+```
+
+## Example: survival analysis
+
+```{r survival}
+cox_table(
+  clin_crc,
+  time = "rfs.delay",
+  event = "rfs.event",
+  factors = c("sex", "age", "tnm.stage", "cms")
+)
+```
+
+## Example: marker evaluation
+
+Replace `marker` with the score under evaluation. `roc_summary()` reports the
+area under the curve and the optimal operating point; `survival_cutoff()`
+reports the time-dependent cut point for a survival endpoint.
+
+```{r marker}
+marker <- scale(clin_crc$age)
+roc_summary(marker, clin_crc$rfs.event)
+
+survival_cutoff(
+  time = clin_crc$rfs.delay,
+  event = clin_crc$rfs.event,
+  marker = marker,
+  predict_time = 3
+)
+```
+
+## Session information
+
+```{r session}
+sessionInfo()
+```
