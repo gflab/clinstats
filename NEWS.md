@@ -10,8 +10,10 @@
   * `logistic_table()` replaces `factor_analysis_logit()`.
   * `evaluate_model()` replaces `eval_logit()`, with train/test evaluation and
     a DeLong comparison between the two areas under the curve.
-  * `survival_cutoff()` replaces `calc_cutoff_survivalroc()` and now uses the
-    maintained `timeROC` package instead of the unmaintained `survivalROC`.
+  * `survival_cutoff()` replaces `calc_cutoff_survivalroc()` and computes the
+    Kaplan-Meier Youden cut point directly with `survival::survfit()` over a
+    bounded quantile grid, so the long-unmaintained `survivalROC` package is
+    no longer a dependency.
   * `resample_cox()` replaces `calc_resamp_cox()`, reports per-gene selection
     frequencies, and defaults to the sequential `future` plan.
   * `clean_expression()` replaces `clean_dat()`; gene identifier mapping is

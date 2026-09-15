@@ -2,9 +2,10 @@
 #'
 #' Estimates Kaplan-Meier survival above and below each candidate cut point
 #' of a marker at `predict_time` and returns the cut point that maximises the
-#' Youden index (sensitivity + specificity - 1), the criterion used by the
-#' now-archived `survivalROC` package. Candidates are drawn from a quantile
-#' grid to keep the computation bounded.
+#' Youden index (sensitivity + specificity - 1), the same criterion that the
+#' long-unmaintained `survivalROC` package uses, computed here directly from
+#' [survival::survfit()]. Candidates are drawn from a quantile grid to keep
+#' the computation bounded.
 #'
 #' @param time Numeric follow-up times.
 #' @param event Event indicator (0/1, logical, or a two-level value).

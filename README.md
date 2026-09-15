@@ -106,7 +106,8 @@ Behavioural notes for migrated code:
   model. Use `multivariable = "significant"` to reproduce the previous
   univariable-screening rule.
 * `survival_cutoff()` uses a Kaplan-Meier estimate of the time-dependent
-  Youden index; the archived `survivalROC` dependency is no longer used.
+  Youden index computed with the `survival` package, so the long-unmaintained
+  `survivalROC` package is no longer a dependency.
 * `resample_cox()` reports per-marker selection frequencies instead of a
   raw p-value matrix and follows the `future` parallel plan.
 * `oncotype_crc()` expects genes in rows; transpose matrices that have
