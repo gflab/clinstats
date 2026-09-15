@@ -18,8 +18,11 @@
     replaces `eval_logit()`, with train/test evaluation and a DeLong
     comparison between the two areas under the curve.
   - [`survival_cutoff()`](https://gflab.github.io/clinstats/reference/survival_cutoff.md)
-    replaces `calc_cutoff_survivalroc()` and now uses the maintained
-    `timeROC` package instead of the unmaintained `survivalROC`.
+    replaces `calc_cutoff_survivalroc()` and computes the Kaplan-Meier
+    Youden cut point directly with
+    [`survival::survfit()`](https://rdrr.io/pkg/survival/man/survfit.html)
+    over a bounded quantile grid, so the long-unmaintained `survivalROC`
+    package is no longer a dependency.
   - [`resample_cox()`](https://gflab.github.io/clinstats/reference/resample_cox.md)
     replaces `calc_resamp_cox()`, reports per-gene selection
     frequencies, and defaults to the sequential `future` plan.

@@ -30,7 +30,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/gflab/clinstats/blob/v0.1.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/gflab/clinstats/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -48,7 +48,7 @@
 <li>
 <code><a href="../reference/evaluate_model.html">evaluate_model()</a></code> replaces <code>eval_logit()</code>, with train/test evaluation and a DeLong comparison between the two areas under the curve.</li>
 <li>
-<code><a href="../reference/survival_cutoff.html">survival_cutoff()</a></code> replaces <code>calc_cutoff_survivalroc()</code> and now uses the maintained <code>timeROC</code> package instead of the unmaintained <code>survivalROC</code>.</li>
+<code><a href="../reference/survival_cutoff.html">survival_cutoff()</a></code> replaces <code>calc_cutoff_survivalroc()</code> and computes the Kaplan-Meier Youden cut point directly with <code><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survival::survfit()</a></code> over a bounded quantile grid, so the long-unmaintained <code>survivalROC</code> package is no longer a dependency.</li>
 <li>
 <code><a href="../reference/resample_cox.html">resample_cox()</a></code> replaces <code>calc_resamp_cox()</code>, reports per-gene selection frequencies, and defaults to the sequential <code>future</code> plan.</li>
 <li>

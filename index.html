@@ -213,7 +213,7 @@
 <ul>
 <li>Regression tables default to including all variables in the multivariable model. Use <code>multivariable = "significant"</code> to reproduce the previous univariable-screening rule.</li>
 <li>
-<code><a href="reference/survival_cutoff.html">survival_cutoff()</a></code> uses a Kaplan-Meier estimate of the time-dependent Youden index; the archived <code>survivalROC</code> dependency is no longer used.</li>
+<code><a href="reference/survival_cutoff.html">survival_cutoff()</a></code> uses a Kaplan-Meier estimate of the time-dependent Youden index computed with the <code>survival</code> package, so the long-unmaintained <code>survivalROC</code> package is no longer a dependency.</li>
 <li>
 <code><a href="reference/resample_cox.html">resample_cox()</a></code> reports per-marker selection frequencies instead of a raw p-value matrix and follows the <code>future</code> parallel plan.</li>
 <li>

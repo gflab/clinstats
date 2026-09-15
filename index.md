@@ -108,8 +108,9 @@ Behavioural notes for migrated code:
   multivariable model. Use `multivariable = "significant"` to reproduce
   the previous univariable-screening rule.
 - [`survival_cutoff()`](https://gflab.github.io/clinstats/reference/survival_cutoff.md)
-  uses a Kaplan-Meier estimate of the time-dependent Youden index; the
-  archived `survivalROC` dependency is no longer used.
+  uses a Kaplan-Meier estimate of the time-dependent Youden index
+  computed with the `survival` package, so the long-unmaintained
+  `survivalROC` package is no longer a dependency.
 - [`resample_cox()`](https://gflab.github.io/clinstats/reference/resample_cox.md)
   reports per-marker selection frequencies instead of a raw p-value
   matrix and follows the `future` parallel plan.
