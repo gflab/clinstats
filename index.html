@@ -90,7 +90,14 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>Prebuilt binaries for Linux, macOS, and Windows come from <a href="https://gflab.r-universe.dev/clinstats" class="external-link">r-universe</a>, so no compiler is needed:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span></span>
+<span>  <span class="st">"clinstats"</span>,</span>
+<span>  repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>gflab <span class="op">=</span> <span class="st">"https://gflab.r-universe.dev"</span>, CRAN <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Installing from source through GitHub also works:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"gflab/clinstats"</span><span class="op">)</span></span></code></pre></div>
 <p>R 4.1 or later is required.</p>
@@ -149,7 +156,7 @@
 <div class="section level3">
 <h3 id="discrimination-and-odds-ratios">Discrimination and odds ratios<a class="anchor" aria-label="anchor" href="#discrimination-and-odds-ratios"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">marker</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">clin_crc</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/roc_summary.html">roc_summary</a></span><span class="op">(</span><span class="va">marker</span>, <span class="va">clin_crc</span><span class="op">$</span><span class="va">rfs.event</span><span class="op">)</span></span>
@@ -165,7 +172,7 @@
 <h3 id="regression-tables">Regression tables<a class="anchor" aria-label="anchor" href="#regression-tables"></a>
 </h3>
 <p><code><a href="reference/cox_table.html">cox_table()</a></code> and <code><a href="reference/cox_table.html">logistic_table()</a></code> fit every variable on its own, fit one multivariable model, and return both sets of estimates in a single table. Numeric variables contribute one row; factors contribute one row per level against the reference level.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/cox_table.html">cox_table</a></span><span class="op">(</span></span>
 <span>  <span class="va">clin_crc</span>,</span>
 <span>  time <span class="op">=</span> <span class="st">"rfs.delay"</span>,</span>
@@ -177,14 +184,14 @@
 <div class="section level3">
 <h3 id="model-evaluation">Model evaluation<a class="anchor" aria-label="anchor" href="#model-evaluation"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/evaluate_model.html">evaluate_model</a></span><span class="op">(</span><span class="va">train</span>, <span class="va">test</span>, <span class="va">outcome</span> <span class="op">~</span> <span class="va">marker1</span> <span class="op">+</span> <span class="va">marker2</span><span class="op">)</span></span></code></pre></div>
 <p>Returns the training and test AUC with confidence intervals and a DeLong comparison between them.</p>
 </div>
 <div class="section level3">
 <h3 id="expression-data">Expression data<a class="anchor" aria-label="anchor" href="#expression-data"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cleaned</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/clean_expression.html">clean_expression</a></span><span class="op">(</span><span class="va">expression</span><span class="op">)</span>     <span class="co"># samples in rows, genes in columns</span></span>
 <span><span class="fu"><a href="reference/oncotype_crc.html">oncotype_crc</a></span><span class="op">(</span><span class="va">cleaned</span><span class="op">)</span>                       <span class="co"># composes directly</span></span></code></pre></div>
 <p><code><a href="reference/clean_expression.html">clean_expression()</a></code> drops unusable columns, expands <code>" /// "</code> multi-mappings, optionally maps identifiers with <code>org.Hs.eg.db</code>, and collapses duplicated gene columns to the probe with the largest median absolute deviation.</p>
@@ -195,7 +202,7 @@
 </h2>
 <p><code>clin_crc</code>, <code>clin_crc_gf</code>, and <code>clin_crc_cell</code> hold clinical annotations for 2,816 to 2,868 colorectal cancer samples across 25 columns: demographics, TNM stage and T/N/M categories, tumour location and grade, adjuvant chemotherapy, relapse-free, overall, and disease-free survival with their times, MMR/CIMP/CIN status, TP53/KRAS/BRAF mutation status, source dataset, and consensus molecular subtype.</p>
 <p>Sources are the GEO series GSE14333, GSE17538, GSE18088, GSE26906, GSE31595, GSE33113, GSE37892, GSE39084, and GSE39582 (the PETACC-3 cohort), plus TCGA clinical exports. Every source is public and the data contain no patient identifiers.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">clin_crc</span><span class="op">)</span>          <span class="co"># 2816 x 25</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">clin_crc</span><span class="op">$</span><span class="va">dataset</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="reference/clin_crc.html">?clin_crc</a></code> documents the column layout; <code>data-raw/README.md</code> records the source of each cohort and the SHA-256 of each released object. Biological and clinical conclusions drawn from these datasets remain the responsibility of the analyst.</p>
@@ -204,7 +211,7 @@
 <h2 id="analysis-report-template">Analysis report template<a class="anchor" aria-label="anchor" href="#analysis-report-template"></a>
 </h2>
 <p><code><a href="reference/copy_report_template.html">copy_report_template()</a></code> writes a Quarto document into the current project, with settings for HTML and PDF output and example chunks that use the bundled datasets.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/copy_report_template.html">copy_report_template</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -291,7 +298,7 @@
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"clinstats"</span><span class="op">)</span></span></code></pre></div>
 <p>See <code>CITATION.cff</code> for machine-readable metadata. Release <code>v0.1.2</code> is available as a tag, so a specific state can be pinned.</p>
 </div>
@@ -343,6 +350,8 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/gflab/clinstats/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/gflab/clinstats/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://gflab.github.io/clinstats/"><img src="https://github.com/gflab/clinstats/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
+<li><a href="https://gflab.r-universe.dev/clinstats" class="external-link"><img src="https://gflab.r-universe.dev/clinstats/badges/version" alt="r-universe version"></a></li>
+<li><a href="https://gflab.r-universe.dev/clinstats" class="external-link"><img src="https://gflab.r-universe.dev/clinstats/badges/checks" alt="r-universe status"></a></li>
 <li><a href="https://github.com/gflab/clinstats/blob/main/LICENSE.md" class="external-link"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License: Apache 2.0"></a></li>
 </ul>
 </div>
