@@ -246,11 +246,17 @@ evaluate_model <- function(train, test, formula, positive = NULL,
   p_train <- stats::predict(fit, newdata = train, type = "response")
   p_test <- stats::predict(fit, newdata = test, type = "response")
 
-  # Predicted probabilities must keep a fixed direction: larger values mean
-  # a higher event probability, so an AUC below 0.5 honestly reports a model
-  # that ranks the test data in the wrong direction.
-  roc_train <- pROC::roc(y_train, p_train, direction = ">", quiet = TRUE)
-  roc_test <- pROC::roc(y_test, p_test, direction = ">", quiet = TRUE)
+  # Predicted probabilities keep a fixed direction: a larger value means a
+  # higher event probability, so an AUC below 0.5 honestly reports a model
+  # that ranks the test data in the wrong order.
+  #
+  # pROC defines "<" as "observations are positive when they are greater than
+  # or equal to the threshold", which is the convention a predicted
+  # probability follows. ">" reverses it and would report 1 - AUC, so the
+  # direction must not be flipped here: a good model would otherwise look
+  # useless and the DeLong test would compare the inverted hypothesis.
+  roc_train <- pROC::roc(y_train, p_train, direction = "<", quiet = TRUE)
+  roc_test <- pROC::roc(y_test, p_test, direction = "<", quiet = TRUE)
   ci_train <- as.numeric(pROC::ci.auc(roc_train, conf.level = ci_level))
   ci_test <- as.numeric(pROC::ci.auc(roc_test, conf.level = ci_level))
   delong <- tryCatch(

@@ -4,7 +4,7 @@ authors:
   - family-names: Gao
     given-names: Feng
 title: "clinstats: Clinical Research Statistics Toolkit"
-version: 0.1.1
+version: 0.1.2
 date-released: "2026-09-16"
 license: Apache-2.0
 repository-code: "https://github.com/gflab/clinstats"

@@ -98,18 +98,38 @@ test_that("evaluate_model reproduces pROC AUC values", {
   reference_train <- pROC::roc(
     train$y,
     stats::predict(fit, newdata = train, type = "response"),
-    direction = ">",
+    direction = "<",
     quiet = TRUE
   )
   reference_test <- pROC::roc(
     test$y,
     stats::predict(fit, newdata = test, type = "response"),
-    direction = ">",
+    direction = "<",
     quiet = TRUE
   )
   expect_equal(result$auc_train, as.numeric(pROC::auc(reference_train)))
   expect_equal(result$auc_test, as.numeric(pROC::auc(reference_test)))
   expect_true(result$delong_p >= 0 && result$delong_p <= 1)
+})
+
+test_that("evaluate_model reports a well-ranking model above 0.5", {
+  # Semantic check rather than a comparison against another pROC call: a
+  # marker that is higher in the event group must score above 0.5. Comparing
+  # only against pROC would pass even when both calls shared the same
+  # inverted direction.
+  set.seed(11)
+  make_data <- function(n) {
+    outcome <- rbinom(n, 1, 0.5)
+    marker <- ifelse(outcome == 1, rnorm(n, 1.2), rnorm(n))
+    data.frame(outcome = outcome, marker = marker)
+  }
+  train <- make_data(200)
+  test <- make_data(120)
+
+  result <- evaluate_model(train, test, outcome ~ marker)
+
+  expect_gt(result$auc_train, 0.6)
+  expect_gt(result$auc_test, 0.6)
 })
 
 test_that("column validation reports the offending argument", {
