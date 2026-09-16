@@ -44,7 +44,7 @@ evaluate_model(train, test, y ~ x)
 #> # A tibble: 1 × 11
 #>   n_train n_event_train auc_train train_ci_lower train_ci_upper n_test
 #>     <int>         <int>     <dbl>          <dbl>          <dbl>  <int>
-#> 1      80            39     0.485          0.356          0.613     40
+#> 1      80            39     0.515          0.387          0.644     40
 #> # ℹ 5 more variables: n_event_test <int>, auc_test <dbl>, test_ci_lower <dbl>,
 #> #   test_ci_upper <dbl>, delong_p <dbl>
 ```

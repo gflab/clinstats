@@ -1,5 +1,21 @@
 # Changelog
 
+## clinstats 0.1.2
+
+- [`evaluate_model()`](https://gflab.github.io/clinstats/reference/evaluate_model.md)
+  reported `1 - AUC`. The ROC curves were built with `direction = ">"`,
+  but pROC defines `"<"` as “observations are positive when they are
+  greater than or equal to the threshold”, which is the convention a
+  predicted probability follows. A model that ranked the data well was
+  therefore reported as worse than chance (a true AUC of 0.78 was
+  reported as 0.22) and the DeLong comparison tested the inverted
+  hypothesis. The direction is now `"<"`.
+- Added a semantic test for this: a marker that is higher in the event
+  group must produce an AUC above 0.5. The previous test compared the
+  result against a
+  [`pROC::roc()`](https://rdrr.io/pkg/pROC/man/roc.html) call that used
+  the same inverted direction, so it could not detect the defect.
+
 ## clinstats 0.1.1
 
 - One orientation for every expression-matrix function: **samples in
