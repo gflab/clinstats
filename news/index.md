@@ -1,5 +1,22 @@
 # Changelog
 
+## clinstats 0.1.1
+
+- One orientation for every expression-matrix function: **samples in
+  rows, genes in columns**, which is the convention inherited from
+  `gaofenglib`. In 0.1.0
+  [`clean_expression()`](https://gflab.github.io/clinstats/reference/clean_expression.md)
+  returned samples in rows while
+  [`oncotype_crc()`](https://gflab.github.io/clinstats/reference/oncotype_crc.md)
+  required genes in rows, so the two could not be chained without a
+  manual transpose.
+- [`oncotype_crc()`](https://gflab.github.io/clinstats/reference/oncotype_crc.md)
+  gains a `gene_axis` argument. The default `"columns"` matches
+  [`clean_expression()`](https://gflab.github.io/clinstats/reference/clean_expression.md)
+  and composes with it directly; `"rows"` keeps the previous orientation
+  available. Declaring the wrong axis now reports which argument to use
+  instead of listing twelve missing genes.
+
 ## clinstats 0.1.0
 
 - Initial release. Consolidates and modernises the statistical utilities

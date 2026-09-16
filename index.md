@@ -114,8 +114,14 @@ Behavioural notes for migrated code:
 - [`resample_cox()`](https://gflab.github.io/clinstats/reference/resample_cox.md)
   reports per-marker selection frequencies instead of a raw p-value
   matrix and follows the `future` parallel plan.
-- [`oncotype_crc()`](https://gflab.github.io/clinstats/reference/oncotype_crc.md)
-  expects genes in rows; transpose matrices that have samples in rows.
+- Expression matrices use one orientation throughout: **samples in rows,
+  genes in columns**, as in `gaofenglib`.
+  [`clean_expression()`](https://gflab.github.io/clinstats/reference/clean_expression.md)
+  and
+  [`oncotype_crc()`](https://gflab.github.io/clinstats/reference/oncotype_crc.md)
+  chain directly; pass `gene_axis = "rows"` to
+  [`oncotype_crc()`](https://gflab.github.io/clinstats/reference/oncotype_crc.md)
+  for matrices in the other orientation.
 
 ## License and citation
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">clinstats</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,12 @@
       <small>Source: <a href="https://github.com/gflab/clinstats/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.1" id="clinstats-011">clinstats 0.1.1<a class="anchor" aria-label="anchor" href="#clinstats-011"></a></h2>
+<ul><li>One orientation for every expression-matrix function: <strong>samples in rows, genes in columns</strong>, which is the convention inherited from <code>gaofenglib</code>. In 0.1.0 <code><a href="../reference/clean_expression.html">clean_expression()</a></code> returned samples in rows while <code><a href="../reference/oncotype_crc.html">oncotype_crc()</a></code> required genes in rows, so the two could not be chained without a manual transpose.</li>
+<li>
+<code><a href="../reference/oncotype_crc.html">oncotype_crc()</a></code> gains a <code>gene_axis</code> argument. The default <code>"columns"</code> matches <code><a href="../reference/clean_expression.html">clean_expression()</a></code> and composes with it directly; <code>"rows"</code> keeps the previous orientation available. Declaring the wrong axis now reports which argument to use instead of listing twelve missing genes.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="clinstats-010">clinstats 0.1.0<a class="anchor" aria-label="anchor" href="#clinstats-010"></a></h2>
 <ul><li>Initial release. Consolidates and modernises the statistical utilities and curated colorectal cancer clinical datasets previously distributed as the separate <code>gaofenglib</code> and <code>curatedClinicalData</code> repositories.</li>
@@ -67,7 +73,8 @@
 <li>Datasets <code>clin_crc</code>, <code>clin_crc_gf</code>, and <code>clin_crc_cell</code> are carried over byte-identical from <code>curatedClinicalData</code>, with provenance documentation.</li>
 <li>Added a Quarto analysis report template, <code>testthat</code> coverage, GitHub Actions checks, and a <code>pkgdown</code> site.</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

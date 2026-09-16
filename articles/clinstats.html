@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">clinstats</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -189,8 +189,33 @@ absolute deviation.</p>
 <span><span class="co">#&gt; [5,]  0.621552721 -0.52201251 -1.3045435 -1.3045435</span></span>
 <span><span class="co">#&gt; [6,]  1.148411606 -0.05260191  0.7377763  0.7377763</span></span></code></pre></div>
 <p><code><a href="../reference/oncotype_crc.html">oncotype_crc()</a></code> computes the Oncotype DX colon cancer
-recurrence score from the published panel; genes are expected in
-rows.</p>
+recurrence score from the published panel. It expects the same
+orientation as <code><a href="../reference/clean_expression.html">clean_expression()</a></code> — samples in rows and
+genes in columns — so the two chain directly:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">panel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"BGN"</span>, <span class="st">"FAP"</span>, <span class="st">"INHBA"</span>, <span class="st">"MKI67"</span>, <span class="st">"MYC"</span>, <span class="st">"MYBL2"</span>, <span class="st">"GADD45B"</span>,</span>
+<span>  <span class="st">"ATP5E"</span>, <span class="st">"GPX1"</span>, <span class="st">"PGK1"</span>, <span class="st">"VDAC2"</span>, <span class="st">"UBB"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">expression</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">panel</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>  nrow <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"s"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, <span class="va">panel</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/oncotype_crc.html">oncotype_crc</a></span><span class="op">(</span><span class="fu"><a href="../reference/clean_expression.html">clean_expression</a></span><span class="op">(</span><span class="va">expression</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 11</span></span></span>
+<span><span class="co">#&gt;   sample stroma cell_cycle individual reference corrected_stroma</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s1      10.0       10.3       11.4      10.2              9.80</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s2      10.4       10.2        9.90      9.75            10.6 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> s3       9.76       9.85      10.4      10.1              9.62</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> s4       9.99       9.45       9.95     10.2              9.79</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> s5      10.4       10.5        8.62     10.5              9.93</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: corrected_cell_cycle &lt;dbl&gt;, corrected_individual &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   rs_score &lt;dbl&gt;, oncotype_score &lt;dbl&gt;, oncotype_class &lt;fct&gt;</span></span></span></code></pre></div>
+<p>Matrices with genes in rows are accepted by declaring the axis:
+<code>oncotype_crc(t(expression), gene_axis = "rows")</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>

@@ -157,7 +157,37 @@ clean_expression(expr)
 
 [`oncotype_crc()`](https://gflab.github.io/clinstats/reference/oncotype_crc.md)
 computes the Oncotype DX colon cancer recurrence score from the
-published panel; genes are expected in rows.
+published panel. It expects the same orientation as
+[`clean_expression()`](https://gflab.github.io/clinstats/reference/clean_expression.md)
+— samples in rows and genes in columns — so the two chain directly:
+
+``` r
+
+panel <- c(
+  "BGN", "FAP", "INHBA", "MKI67", "MYC", "MYBL2", "GADD45B",
+  "ATP5E", "GPX1", "PGK1", "VDAC2", "UBB"
+)
+set.seed(1)
+expression <- matrix(
+  rnorm(5 * length(panel), 10),
+  nrow = 5,
+  dimnames = list(paste0("s", 1:5), panel)
+)
+oncotype_crc(clean_expression(expression))
+#> # A tibble: 5 × 11
+#>   sample stroma cell_cycle individual reference corrected_stroma
+#>   <chr>   <dbl>      <dbl>      <dbl>     <dbl>            <dbl>
+#> 1 s1      10.0       10.3       11.4      10.2              9.80
+#> 2 s2      10.4       10.2        9.90      9.75            10.6 
+#> 3 s3       9.76       9.85      10.4      10.1              9.62
+#> 4 s4       9.99       9.45       9.95     10.2              9.79
+#> 5 s5      10.4       10.5        8.62     10.5              9.93
+#> # ℹ 5 more variables: corrected_cell_cycle <dbl>, corrected_individual <dbl>,
+#> #   rs_score <dbl>, oncotype_score <dbl>, oncotype_class <fct>
+```
+
+Matrices with genes in rows are accepted by declaring the axis:
+`oncotype_crc(t(expression), gene_axis = "rows")`.
 
 ## Reproducibility
 

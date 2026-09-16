@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">clinstats</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -216,8 +216,7 @@
 <code><a href="reference/survival_cutoff.html">survival_cutoff()</a></code> uses a Kaplan-Meier estimate of the time-dependent Youden index computed with the <code>survival</code> package, so the long-unmaintained <code>survivalROC</code> package is no longer a dependency.</li>
 <li>
 <code><a href="reference/resample_cox.html">resample_cox()</a></code> reports per-marker selection frequencies instead of a raw p-value matrix and follows the <code>future</code> parallel plan.</li>
-<li>
-<code><a href="reference/oncotype_crc.html">oncotype_crc()</a></code> expects genes in rows; transpose matrices that have samples in rows.</li>
+<li>Expression matrices use one orientation throughout: <strong>samples in rows, genes in columns</strong>, as in <code>gaofenglib</code>. <code><a href="reference/clean_expression.html">clean_expression()</a></code> and <code><a href="reference/oncotype_crc.html">oncotype_crc()</a></code> chain directly; pass <code>gene_axis = "rows"</code> to <code><a href="reference/oncotype_crc.html">oncotype_crc()</a></code> for matrices in the other orientation.</li>
 </ul>
 </div>
 <div class="section level2">
