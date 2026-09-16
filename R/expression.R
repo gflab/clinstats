@@ -82,9 +82,12 @@ clean_expression <- function(expression, id_from = NULL, id_to = "SYMBOL") {
 #' gene panel. The formula and the panel, including the reference genes, are
 #' unchanged from the original `calc_oncotypedx_crc()` helper.
 #'
-#' @param expression Numeric matrix with gene symbols in rows and samples in
-#'   columns. Use [clean_expression()] first if the matrix has samples in
-#'   rows.
+#' @param expression Numeric matrix of gene expression values.
+#' @param gene_axis Axis that holds the gene symbols. `"columns"` (the
+#'   default) expects samples in rows, which is the orientation returned by
+#'   [clean_expression()] and the convention inherited from `gaofenglib`;
+#'   the two functions therefore compose directly. Use `"rows"` for matrices
+#'   with genes in rows and samples in columns.
 #'
 #' @return A tibble with one row per sample: the stromal, cell-cycle, and
 #'   individual gene scores, the reference score, the corrected scores, the
@@ -97,27 +100,55 @@ clean_expression <- function(expression, id_from = NULL, id_to = "SYMBOL") {
 #'   "BGN", "FAP", "INHBA", "MKI67", "MYC", "MYBL2", "GADD45B",
 #'   "ATP5E", "GPX1", "PGK1", "VDAC2", "UBB"
 #' )
-#' expr <- matrix(rnorm(12 * 3, 10), nrow = 12, dimnames = list(panel, paste0("s", 1:3)))
-#' oncotype_crc(expr)
-oncotype_crc <- function(expression) {
+#' samples_by_genes <- matrix(
+#'   rnorm(3 * 12, 10),
+#'   nrow = 3,
+#'   dimnames = list(paste0("s", 1:3), panel)
+#' )
+#' oncotype_crc(samples_by_genes)
+#'
+#' # Genes in rows also work when declared explicitly.
+#' oncotype_crc(t(samples_by_genes), gene_axis = "rows")
+oncotype_crc <- function(expression, gene_axis = c("columns", "rows")) {
+  gene_axis <- match.arg(gene_axis)
   x <- as.matrix(expression)
   if (!is.numeric(x)) {
     cli::cli_abort("{.arg expression} must be numeric.")
   }
-  if (is.null(rownames(x))) {
-    cli::cli_abort("{.arg expression} must have gene symbols in row names.")
-  }
+
   stroma <- c("BGN", "FAP", "INHBA")
   cell_cycle <- c("MKI67", "MYC", "MYBL2")
   individual <- "GADD45B"
   reference <- c("ATP5E", "GPX1", "PGK1", "VDAC2", "UBB")
   panel <- c(stroma, cell_cycle, individual, reference)
-  missing <- setdiff(panel, rownames(x))
+
+  probes <- if (gene_axis == "columns") colnames(x) else rownames(x)
+  missing <- setdiff(panel, probes)
   if (length(missing) > 0) {
+    other <- if (gene_axis == "columns") rownames(x) else colnames(x)
+    if (!is.null(other) && all(panel %in% other)) {
+      alternative <- if (gene_axis == "columns") "rows" else "columns"
+      cli::cli_abort(c(
+        "The panel genes are on the {alternative} axis of {.arg expression}.",
+        i = 'Pass {.code gene_axis = "{alternative}"}, or transpose the matrix.'
+      ))
+    }
     cli::cli_abort(c(
       "{.arg expression} is missing panel genes {.val {missing}}.",
-      i = "Genes must be in rows; transpose the matrix if they are in columns."
+      i = "Panel genes must be on the axis named by {.arg gene_axis}."
     ))
+  }
+
+  # Normalise once to genes in rows so the score is computed in one
+  # orientation regardless of how the caller supplied the matrix.
+  if (gene_axis == "columns") {
+    sample_ids <- rownames(x)
+    x <- t(x)
+  } else {
+    sample_ids <- colnames(x)
+  }
+  if (is.null(sample_ids)) {
+    sample_ids <- as.character(seq_len(ncol(x)))
   }
 
   mean_score <- function(genes) {
@@ -136,7 +167,7 @@ oncotype_crc <- function(expression) {
   oncotype_score <- 44 * (rs_score + 0.82)
 
   tibble::tibble(
-    sample = colnames(x),
+    sample = sample_ids,
     stroma = score_stroma,
     cell_cycle = score_cell_cycle,
     individual = score_individual,

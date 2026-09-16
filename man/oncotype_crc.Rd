@@ -4,12 +4,16 @@
 \alias{oncotype_crc}
 \title{Oncotype DX colon cancer recurrence score}
 \usage{
-oncotype_crc(expression)
+oncotype_crc(expression, gene_axis = c("columns", "rows"))
 }
 \arguments{
-\item{expression}{Numeric matrix with gene symbols in rows and samples in
-columns. Use \code{\link[=clean_expression]{clean_expression()}} first if the matrix has samples in
-rows.}
+\item{expression}{Numeric matrix of gene expression values.}
+
+\item{gene_axis}{Axis that holds the gene symbols. \code{"columns"} (the
+default) expects samples in rows, which is the orientation returned by
+\code{\link[=clean_expression]{clean_expression()}} and the convention inherited from \code{gaofenglib};
+the two functions therefore compose directly. Use \code{"rows"} for matrices
+with genes in rows and samples in columns.}
 }
 \value{
 A tibble with one row per sample: the stromal, cell-cycle, and
@@ -27,6 +31,13 @@ panel <- c(
   "BGN", "FAP", "INHBA", "MKI67", "MYC", "MYBL2", "GADD45B",
   "ATP5E", "GPX1", "PGK1", "VDAC2", "UBB"
 )
-expr <- matrix(rnorm(12 * 3, 10), nrow = 12, dimnames = list(panel, paste0("s", 1:3)))
-oncotype_crc(expr)
+samples_by_genes <- matrix(
+  rnorm(3 * 12, 10),
+  nrow = 3,
+  dimnames = list(paste0("s", 1:3), panel)
+)
+oncotype_crc(samples_by_genes)
+
+# Genes in rows also work when declared explicitly.
+oncotype_crc(t(samples_by_genes), gene_axis = "rows")
 }

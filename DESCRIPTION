@@ -1,6 +1,6 @@
 Package: clinstats
 Title: Clinical Research Statistics Toolkit
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Feng", "Gao", email = "gaofeng21cn@gmail.com", role = c("aut", "cre")),
     person("Lina", "Zhu", role = "ctb"),

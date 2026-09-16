@@ -106,7 +106,25 @@ clean_expression(expr)
 ```
 
 `oncotype_crc()` computes the Oncotype DX colon cancer recurrence score from
-the published panel; genes are expected in rows.
+the published panel. It expects the same orientation as `clean_expression()` —
+samples in rows and genes in columns — so the two chain directly:
+
+```{r}
+panel <- c(
+  "BGN", "FAP", "INHBA", "MKI67", "MYC", "MYBL2", "GADD45B",
+  "ATP5E", "GPX1", "PGK1", "VDAC2", "UBB"
+)
+set.seed(1)
+expression <- matrix(
+  rnorm(5 * length(panel), 10),
+  nrow = 5,
+  dimnames = list(paste0("s", 1:5), panel)
+)
+oncotype_crc(clean_expression(expression))
+```
+
+Matrices with genes in rows are accepted by declaring the axis:
+`oncotype_crc(t(expression), gene_axis = "rows")`.
 
 ## Reproducibility
 

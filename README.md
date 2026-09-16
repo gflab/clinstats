@@ -110,8 +110,10 @@ Behavioural notes for migrated code:
   `survivalROC` package is no longer a dependency.
 * `resample_cox()` reports per-marker selection frequencies instead of a
   raw p-value matrix and follows the `future` parallel plan.
-* `oncotype_crc()` expects genes in rows; transpose matrices that have
-  samples in rows.
+* Expression matrices use one orientation throughout: **samples in rows,
+  genes in columns**, as in `gaofenglib`. `clean_expression()` and
+  `oncotype_crc()` chain directly; pass `gene_axis = "rows"` to
+  `oncotype_crc()` for matrices in the other orientation.
 
 ## License and citation
 
