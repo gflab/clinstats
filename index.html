@@ -52,12 +52,45 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Clinical Research Statistics Toolkit. A compact set of statistical utilities that recur in clinical and translational research, together with curated colorectal cancer clinical datasets assembled from public repositories and a Quarto analysis report template.</p>
-<p>The package is the maintained successor of the archived <code>gaofenglib</code> and <code>curatedClinicalData</code> repositories. Statistical routines were rewritten with input validation, tidy output, and tests; the datasets are carried over without changing the stored values.</p>
+<p>Clinical research statistics, as tidy data. <code>clinstats</code> covers the analyses that recur in clinical and translational papers — discrimination, odds ratios, univariable and multivariable regression tables, survival cut points, and expression-matrix preparation — and returns a tibble from every function so results can be printed, filtered, joined, and exported.</p>
+<p>The package also ships curated colorectal cancer clinical datasets assembled from public repositories, and a Quarto analysis report template.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gflab/clinstats" class="external-link">clinstats</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/cox_table.html">cox_table</a></span><span class="op">(</span></span>
+<span>  <span class="va">clin_crc</span>,</span>
+<span>  time <span class="op">=</span> <span class="st">"rfs.delay"</span>,</span>
+<span>  event <span class="op">=</span> <span class="st">"rfs.event"</span>,</span>
+<span>  factors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span>, <span class="st">"tnm.stage"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 13</span></span>
+<span><span class="co">#&gt;   term      variable  level     n n_event hr_univariable univ_ci_lower</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;   &lt;int&gt;          &lt;dbl&gt;         &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 sexM      sex       M      1641     561          1.14          0.967</span></span>
+<span><span class="co">#&gt; 2 age       age       &lt;NA&gt;   1640     561          0.999         0.993</span></span>
+<span><span class="co">#&gt; 3 tnm.stage tnm.stage &lt;NA&gt;   1632     558          1.82          1.62</span></span>
+<span><span class="co">#&gt; # ℹ 6 more variables: univ_ci_upper &lt;dbl&gt;, univ_p &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   hr_multivariable &lt;dbl&gt;, multi_ci_lower &lt;dbl&gt;, multi_ci_upper &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   multi_p &lt;dbl&gt;</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="why-clinstats-exists">Why clinstats exists<a class="anchor" aria-label="anchor" href="#why-clinstats-exists"></a>
+</h2>
+<p>Clinical statistics code tends to be written once per paper and copied forward. The same ROC summary, the same two regression tables, the same expression cleanup, reimplemented slightly differently each time — which makes results hard to reproduce and easy to get subtly wrong.</p>
+<p><code>clinstats</code> collects those analyses into tested functions. Three properties do the work:</p>
+<ul>
+<li>
+<strong>A tibble from every function.</strong> Results can be filtered, joined, and written out with the rest of a tidy pipeline, and printed in a report without reshaping. Regression tables put univariable and multivariable estimates side by side in one table.</li>
+<li>
+<strong>Validated input.</strong> Every function checks its arguments and reports what is wrong and how to fix it, instead of failing deep inside a model fit.</li>
+<li>
+<strong>One expression-matrix orientation.</strong> Samples in rows and genes in columns throughout, so the functions chain without manual transposes.</li>
+</ul>
+<p>The statistical routines were rewritten from the retired <code>gaofenglib</code> package, and the datasets carried over unchanged from <code>curatedClinicalData</code>. See <a href="#compatibility">Compatibility</a> for the migration table.</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"gflab/clinstats"</span><span class="op">)</span></span></code></pre></div>
 <p>R 4.1 or later is required.</p>
@@ -109,48 +142,75 @@
 </tr>
 </tbody>
 </table>
-<p>All functions return tibbles, validate their inputs, and report clear errors.</p>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gflab/clinstats" class="external-link">clinstats</a></span><span class="op">)</span></span>
+<div class="section level3">
+<h3 id="discrimination-and-odds-ratios">Discrimination and odds ratios<a class="anchor" aria-label="anchor" href="#discrimination-and-odds-ratios"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">marker</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">clin_crc</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Discriminatory performance of a marker</span></span>
-<span><span class="fu"><a href="reference/roc_summary.html">roc_summary</a></span><span class="op">(</span><span class="va">clin_crc</span><span class="op">$</span><span class="va">age</span>, <span class="va">clin_crc</span><span class="op">$</span><span class="va">rfs.event</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/roc_summary.html">roc_summary</a></span><span class="op">(</span><span class="va">marker</span>, <span class="va">clin_crc</span><span class="op">$</span><span class="va">rfs.event</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 12</span></span>
+<span><span class="co">#&gt;       n n_event   auc auc_ci_lower auc_ci_upper direction threshold</span></span>
+<span><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1  1698     574 0.514        0.485        0.542 &gt;             0.143</span></span>
 <span></span>
-<span><span class="co"># Univariable and multivariable Cox table</span></span>
-<span><span class="fu"><a href="reference/cox_table.html">cox_table</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="reference/odds_ratio.html">odds_ratio</a></span><span class="op">(</span><span class="va">marker</span>, <span class="va">clin_crc</span><span class="op">$</span><span class="va">rfs.event</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="reference/roc_summary.html">roc_summary()</a></code> returns the area under the curve, its confidence interval, the optimal operating point, and the sensitivity and specificity at that point. <code>direction = "auto"</code> lets <code>pROC</code> choose the orientation from the data, which is what you want when the sign of a marker is not known in advance.</p>
+</div>
+<div class="section level3">
+<h3 id="regression-tables">Regression tables<a class="anchor" aria-label="anchor" href="#regression-tables"></a>
+</h3>
+<p><code><a href="reference/cox_table.html">cox_table()</a></code> and <code><a href="reference/cox_table.html">logistic_table()</a></code> fit every variable on its own, fit one multivariable model, and return both sets of estimates in a single table. Numeric variables contribute one row; factors contribute one row per level against the reference level.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/cox_table.html">cox_table</a></span><span class="op">(</span></span>
 <span>  <span class="va">clin_crc</span>,</span>
 <span>  time <span class="op">=</span> <span class="st">"rfs.delay"</span>,</span>
 <span>  event <span class="op">=</span> <span class="st">"rfs.event"</span>,</span>
 <span>  factors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span>, <span class="st">"tnm.stage"</span>, <span class="st">"cms"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Logistic table for a binary endpoint</span></span>
-<span><span class="fu"><a href="reference/cox_table.html">logistic_table</a></span><span class="op">(</span></span>
-<span>  <span class="va">clin_crc</span>,</span>
-<span>  outcome <span class="op">=</span> <span class="st">"rfs.event"</span>,</span>
-<span>  factors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span>, <span class="st">"tnm.stage"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>The multivariable model includes every requested variable by default. Use <code>multivariable = "significant"</code> to keep only variables with a univariable likelihood-ratio p-value below 0.05, or <code>multivariable = "none"</code> for univariable estimates alone.</p>
+</div>
+<div class="section level3">
+<h3 id="model-evaluation">Model evaluation<a class="anchor" aria-label="anchor" href="#model-evaluation"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/evaluate_model.html">evaluate_model</a></span><span class="op">(</span><span class="va">train</span>, <span class="va">test</span>, <span class="va">outcome</span> <span class="op">~</span> <span class="va">marker1</span> <span class="op">+</span> <span class="va">marker2</span><span class="op">)</span></span></code></pre></div>
+<p>Returns the training and test AUC with confidence intervals and a DeLong comparison between them.</p>
+</div>
+<div class="section level3">
+<h3 id="expression-data">Expression data<a class="anchor" aria-label="anchor" href="#expression-data"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cleaned</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/clean_expression.html">clean_expression</a></span><span class="op">(</span><span class="va">expression</span><span class="op">)</span>     <span class="co"># samples in rows, genes in columns</span></span>
+<span><span class="fu"><a href="reference/oncotype_crc.html">oncotype_crc</a></span><span class="op">(</span><span class="va">cleaned</span><span class="op">)</span>                       <span class="co"># composes directly</span></span></code></pre></div>
+<p><code><a href="reference/clean_expression.html">clean_expression()</a></code> drops unusable columns, expands <code>" /// "</code> multi-mappings, optionally maps identifiers with <code>org.Hs.eg.db</code>, and collapses duplicated gene columns to the probe with the largest median absolute deviation.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h2>
-<p><code>clin_crc</code>, <code>clin_crc_gf</code>, and <code>clin_crc_cell</code> hold clinical annotations for 2,816 to 2,868 colorectal cancer samples from GEO series GSE14333, GSE17538, GSE18088, GSE26906, GSE31595, GSE33113, GSE37892, GSE39084, GSE39582 (the PETACC-3 cohort), and TCGA clinical exports. All sources are public and the data contain no patient identifiers. See <code>data-raw/README.md</code> for provenance and checksums. Biological and clinical conclusions drawn from these datasets remain the responsibility of the analyst.</p>
+<p><code>clin_crc</code>, <code>clin_crc_gf</code>, and <code>clin_crc_cell</code> hold clinical annotations for 2,816 to 2,868 colorectal cancer samples across 25 columns: demographics, TNM stage and T/N/M categories, tumour location and grade, adjuvant chemotherapy, relapse-free, overall, and disease-free survival with their times, MMR/CIMP/CIN status, TP53/KRAS/BRAF mutation status, source dataset, and consensus molecular subtype.</p>
+<p>Sources are the GEO series GSE14333, GSE17538, GSE18088, GSE26906, GSE31595, GSE33113, GSE37892, GSE39084, and GSE39582 (the PETACC-3 cohort), plus TCGA clinical exports. Every source is public and the data contain no patient identifiers.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">clin_crc</span><span class="op">)</span>          <span class="co"># 2816 x 25</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">clin_crc</span><span class="op">$</span><span class="va">dataset</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="reference/clin_crc.html">?clin_crc</a></code> documents the column layout; <code>data-raw/README.md</code> records the source of each cohort and the SHA-256 of each released object. Biological and clinical conclusions drawn from these datasets remain the responsibility of the analyst.</p>
 </div>
 <div class="section level2">
 <h2 id="analysis-report-template">Analysis report template<a class="anchor" aria-label="anchor" href="#analysis-report-template"></a>
 </h2>
-<p><code><a href="reference/copy_report_template.html">copy_report_template()</a></code> writes a Quarto document with defaults for HTML and PDF output into the current project.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p><code><a href="reference/copy_report_template.html">copy_report_template()</a></code> writes a Quarto document into the current project, with settings for HTML and PDF output and example chunks that use the bundled datasets.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/copy_report_template.html">copy_report_template</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="migrating-from-gaofenglib-and-curatedclinicaldata">Migrating from gaofenglib and curatedClinicalData<a class="anchor" aria-label="anchor" href="#migrating-from-gaofenglib-and-curatedclinicaldata"></a>
+<h2 id="compatibility">Compatibility<a class="anchor" aria-label="anchor" href="#compatibility"></a>
 </h2>
-<p>The old packages are retired. The mapping below covers the exported helpers; <code>init_R()</code> and <code>update_all()</code> were removed because packages should not reinstall the user environment.</p>
+<p><code>clinstats</code> is the maintained successor of the archived <code>gaofenglib</code> and <code>curatedClinicalData</code> repositories. Those packages still install, and <code>clinstats</code> consolidates them so the lab maintains one package rather than several overlapping ones.</p>
 <table class="table">
 <thead><tr>
 <th>Old</th>
@@ -209,25 +269,41 @@
 </tr>
 </tbody>
 </table>
-<p>Behavioural notes for migrated code:</p>
+<p>Changes to expect when migrating:</p>
 <ul>
-<li>Regression tables default to including all variables in the multivariable model. Use <code>multivariable = "significant"</code> to reproduce the previous univariable-screening rule.</li>
 <li>
-<code><a href="reference/survival_cutoff.html">survival_cutoff()</a></code> uses a Kaplan-Meier estimate of the time-dependent Youden index computed with the <code>survival</code> package, so the long-unmaintained <code>survivalROC</code> package is no longer a dependency.</li>
+<strong>Results are tibbles, not base data frames.</strong> Positional indexing and <code><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames()</a></code> no longer apply.</li>
 <li>
-<code><a href="reference/resample_cox.html">resample_cox()</a></code> reports per-marker selection frequencies instead of a raw p-value matrix and follows the <code>future</code> parallel plan.</li>
-<li>Expression matrices use one orientation throughout: <strong>samples in rows, genes in columns</strong>, as in <code>gaofenglib</code>. <code><a href="reference/clean_expression.html">clean_expression()</a></code> and <code><a href="reference/oncotype_crc.html">oncotype_crc()</a></code> chain directly; pass <code>gene_axis = "rows"</code> to <code><a href="reference/oncotype_crc.html">oncotype_crc()</a></code> for matrices in the other orientation.</li>
+<strong>Regression tables include every variable by default.</strong> Use <code>multivariable = "significant"</code> to reproduce the previous univariable-screening rule.</li>
+<li>
+<strong><code><a href="reference/survival_cutoff.html">survival_cutoff()</a></code> computes the Kaplan-Meier Youden index</strong> with the <code>survival</code> package, so the long-unmaintained <code>survivalROC</code> is no longer a dependency.</li>
+<li>
+<strong><code><a href="reference/resample_cox.html">resample_cox()</a></code> reports per-marker selection frequencies</strong> instead of a raw p-value matrix, and follows the <code>future</code> parallel plan.</li>
+<li>
+<strong><code>init_R()</code> and <code>update_all()</code> were removed.</strong> A library should not reinstall the user’s environment.</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="license-and-citation">License and citation<a class="anchor" aria-label="anchor" href="#license-and-citation"></a>
+<h2 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
 </h2>
-<p>Apache License 2.0. See <code>CITATION.cff</code> for citation metadata. Copyright 2026 FengGao Lab contributors.</p>
+<p><a href="https://github.com/gflab/gfplot" class="external-link">gfplot</a> produces the figures that go with these analyses — Kaplan-Meier curves with hazard ratios, ROC curves, risk score distributions — in the lab house style. The two packages share the same datasets, so <code>clinstats</code> results feed directly into <code>gfplot</code> figures.</p>
 </div>
 <div class="section level2">
-<h2 id="maintenance">Maintenance<a class="anchor" aria-label="anchor" href="#maintenance"></a>
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>Primary maintainer: Feng Gao (gflab). Bug reports and feature requests are welcome through GitHub Issues.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"clinstats"</span><span class="op">)</span></span></code></pre></div>
+<p>See <code>CITATION.cff</code> for machine-readable metadata. Release <code>v0.1.2</code> is available as a tag, so a specific state can be pinned.</p>
+</div>
+<div class="section level2">
+<h2 id="getting-help">Getting help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
+</h2>
+<p>Bug reports and feature requests are welcome through <a href="https://github.com/gflab/clinstats/issues" class="external-link">GitHub Issues</a>. Reference documentation for every function is on the <a href="https://gflab.github.io/clinstats/">package site</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p>Apache License 2.0. See <a href="LICENSE.html">LICENSE.md</a>. Copyright 2026 FengGao Lab contributors.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -266,6 +342,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/gflab/clinstats/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/gflab/clinstats/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://gflab.github.io/clinstats/"><img src="https://github.com/gflab/clinstats/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
+<li><a href="https://github.com/gflab/clinstats/blob/main/LICENSE.md" class="external-link"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License: Apache 2.0"></a></li>
 </ul>
 </div>
 
