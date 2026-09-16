@@ -3,6 +3,8 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/gflab/clinstats/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gflab/clinstats/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://github.com/gflab/clinstats/actions/workflows/pkgdown.yaml/badge.svg)](https://gflab.github.io/clinstats/)
+[![r-universe version](https://gflab.r-universe.dev/clinstats/badges/version)](https://gflab.r-universe.dev/clinstats)
+[![r-universe status](https://gflab.r-universe.dev/clinstats/badges/checks)](https://gflab.r-universe.dev/clinstats)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/gflab/clinstats/blob/main/LICENSE.md)
 <!-- badges: end -->
 
@@ -60,6 +62,18 @@ package, and the datasets carried over unchanged from
 table.
 
 ## Installation
+
+Prebuilt binaries for Linux, macOS, and Windows come from
+[r-universe](https://gflab.r-universe.dev/clinstats), so no compiler is needed:
+
+```r
+install.packages(
+  "clinstats",
+  repos = c(gflab = "https://gflab.r-universe.dev", CRAN = "https://cloud.r-project.org")
+)
+```
+
+Installing from source through GitHub also works:
 
 ```r
 # install.packages("remotes")
